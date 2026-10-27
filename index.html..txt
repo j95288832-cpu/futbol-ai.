@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Football Club Analyzer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); }
+        .glow { box-shadow: 0 0 35px rgba(59, 130, 246, 0.25); }
+        .glow-gold { box-shadow: 0 0 35px rgba(234, 179, 8, 0.25); }
+        .pulse-light { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="border-b border-slate-800/80 bg-slate-900/90 sticky top-0 z-50 backdrop-blur-md shadow-lg shadow-black/20">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 rounded-xl shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-robot text-2xl text-white"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl font-black bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent tracking-tight">
+                            FutbolAI Pro
+                        </h1>
+                        <span class="text-[10px] uppercase font-bold tracking-widest bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full">Web Edition</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Proyecto de Robótica, Inteligencia Artificial & Estadística Futbolística</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 text-xs bg-slate-800/90 px-3.5 py-1.5 rounded-full border border-slate-700/80">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-slate-300 font-medium">Gemini 3 Flash Connected</span>
+                </div>
+                <button onclick="window.print()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 text-xs flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-print"></i>
+                    <span class="hidden md:inline">Imprimir / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8 w-full flex-grow">
+        
+        <!-- Search Section -->
+        <section class="mb-10 text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Analizador Inteligente de Clubes en Tiempo Real
+            </div>
+            <h2 class="text-3xl sm:text-5xl font-black mb-3 tracking-tight text-white">
+                Base de Datos Universal de Fútbol
+            </h2>
+            <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
+                Escribe cualquier equipo del mundo. La Inteligencia Artificial analizará sus títulos, historia, fundadores, apodos, rankings, plantilla e información de estadios.
+            </p>
+
+            <form id="searchForm" class="max-w-2xl mx-auto flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-futbol absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg"></i>
+                    <input 
+                        type="text" 
+                        id="clubInput" 
+                        placeholder="Ingresa un club: Ej. Real Madrid, Boca Juniors, PSG, Inter..." 
+                        required
+                        class="w-full pl-11 pr-4 py-4 bg-slate-900/90 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all text-sm sm:text-base shadow-inner"
+                    >
+                </div>
+                <button 
+                    type="submit" 
+                    id="searchBtn"
+                    class="px-8 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 font-bold rounded-xl transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2.5 cursor-pointer active:scale-95 text-white"
+                >
+                    <span>Analizar</span>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+
+            <!-- Quick Search Buttons -->
+            <div class="flex flex-wrap justify-center items-center gap-2 mt-5 text-xs text-slate-400">
+                <span class="font-semibold text-slate-500"><i class="fa-solid fa-bolt text-yellow-400 mr-1"></i> Búsqueda rápida:</span>
+                <button onclick="searchClub('Real Madrid')" class="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700 hover:text-white rounded-md border border-slate-700/50 transition-all cursor-pointer">Real Madrid</button>
+                <button onclick="searchClub('FC Barcelona')" class="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700 hover:text-white rounded-md border border-slate-700/50 transition-all cursor-pointer">FC Barcelona</button>
+                <button onclick="searchClub('Boca Juniors')" class="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700 hover:text-white rounded-md border border-slate-700/50 transition-all cursor-pointer">Boca Juniors</button>
+                <button onclick="searchClub('River Plate')" class="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700 hover:text-white rounded-md border border-slate-700/50 transition-all cursor-pointer">River Plate</button>
+                <button onclick="searchClub('Manchester City')" class="px-2.5 py-1 bg-slate-800/60 hover:bg-slate-700 hover:text-white rounded-md border border-slate-700/50 transition-all cursor-pointer">Manchester City</button>
+            </div>
+        </section>
+
+        <!-- World Cup Winners Section -->
+        <section class="mb-10 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+                <h3 class="text-xl font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-400"></i> Selecciones Campeonas del Mundo (FIFA World Cup)
+                </h3>
+                <span class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">8 Países Históricos</span>
+            </div>
+            <p class="text-slate-400 text-xs sm:text-sm mb-5">
+                Resumen mundialista oficial con todas las selecciones que conquistaron la Copa Mundial de la FIFA y sus respectivos años de gloria:
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/50 transition-all flex items-center gap-3">
+                    <span class="text-3xl">🇧🇷</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Brasil <span class="text-xs text-amber-400 font-extrabold">(5)</span></h4>
+                        <p class="text-xs text-slate-300 font-medium mt-0.5">1958, 1962, 1970, 1994, 2002</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/50 transition-all flex items-center gap-3">
+                    <span class="text-3xl">🇩🇪</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Alemania <span class="text-xs text-amber-400 font-extrabold">(4)</span></h4>
+                        <p class="text-xs text-slate-300 font-medium mt-0.5">1954, 1974, 1990, 2014</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/50 transition-all flex items-center gap-3">
+                    <span class="text-3xl">🇮🇹</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Italia <span class="text-xs text-amber-400 font-extrabold">(4)</span></h4>
+                        <p class="text-xs text-slate-300 font-medium mt-0.5">1934, 1938, 1982, 2006</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/50 transition-all flex items-center gap-3">
+                    <span class="text-3xl">🇦🇷</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Argentina <span class="text-xs text-amber-400 font-extrabold">(3)</span></h4>
+                        <p class="text-xs text-slate-300 font-medium mt-0.5">1978, 1986, 2022</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/50 transition-all flex items-center gap-3">
+                    <span class="text-3xl">🇫🇷</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Francia <span class="text-xs text-amber-400 font-extrabold">(2)</span></h4>
+                        <p class="text-xs text-slate-300 font-medium mt-0.5">1998, 2018</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/50 transition-all flex items-center gap-3">
+                    <span class="text-3xl">🇺🇾</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Uruguay <span class="text-xs text-amber-400 font-extrabold">(2)</span></h4>
+                        <p class="text-xs text-slate-300 font-medium mt-0.5">1930, 1950</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/50 transition-all flex items-center gap-3">
+                    <span class="text-3xl">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Inglaterra <span class="text-xs text-amber-400 font-extrabold">(1)</span></h4>
+                        <p class="text-xs text-slate-300 font-medium mt-0.5">1966</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/50 transition-all flex items-center gap-3">
+                    <span class="text-3xl">🇪🇸</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">España <span class="text-xs text-amber-400 font-extrabold">(1)</span></h4>
+                        <p class="text-xs text-slate-300 font-medium mt-0.5">2010</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden text-center py-16">
+            <div class="inline-block relative w-20 h-20 mb-4">
+                <div class="absolute top-0 left-0 w-full h-full border-4 border-blue-500/20 rounded-full"></div>
+                <div class="absolute top-0 left-0 w-full h-full border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <i class="fa-solid fa-futbol text-blue-400 text-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pulse-light"></i>
+            </div>
+            <p class="text-slate-200 font-bold text-xl">Consultando a Gemini AI...</p>
+            <p class="text-slate-400 text-sm mt-1">Recopilando títulos, escudos, estadios, rivales y datos históricos</p>
+        </div>
+
+        <!-- Error Container -->
+        <div id="errorMessage" class="hidden mb-6 p-4 bg-red-950/60 border border-red-500/50 rounded-xl text-red-200 text-sm text-center shadow-lg">
+            <i class="fa-solid fa-triangle-exclamation text-red-400 mr-2 text-base"></i>
+            <span id="errorText">Hubo un problema al cargar la información. Intenta de nuevo.</span>
+        </div>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" class="hidden space-y-6">
+
+            <!-- Banner Principal / Ficha Técnica Básica -->
+            <div class="glass border border-slate-800 rounded-2xl p-6 glow relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-5 text-slate-100 pointer-events-none">
+                    <i class="fa-solid fa-shield-halved text-9xl"></i>
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+                    <div class="flex items-center gap-5">
+                        <!-- Badge / Image Container -->
+                        <div class="w-24 h-24 bg-slate-900 rounded-2xl border border-slate-700/80 p-2.5 flex items-center justify-center shrink-0 shadow-lg relative group">
+                            <img id="clubBadge" src="" alt="Escudo del Club" class="max-w-full max-h-full object-contain filter drop-shadow" onerror="this.onerror=null; this.src='https://placehold.co/120x120/1e293b/38bdf8?text=FC';">
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <h2 id="clubName" class="text-3xl sm:text-4xl font-black text-white tracking-tight">---</h2>
+                                <span id="countryBadge" class="bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs px-3 py-1 rounded-full font-bold">---</span>
+                            </div>
+                            <p id="stadiumInfo" class="text-slate-400 text-sm mt-1.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-red-400"></i>
+                                <span id="stadiumName" class="font-medium text-slate-300">---</span> 
+                                <span class="text-slate-500">•</span>
+                                <span class="text-slate-400"><i class="fa-solid fa-users text-xs mr-1"></i><span id="stadiumCapacity">---</span> espectadores</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-left md:text-right w-full md:w-auto shrink-0 shadow-inner">
+                        <span class="text-[11px] text-slate-400 uppercase tracking-wider font-bold block mb-0.5">Liga Actual</span>
+                        <span id="leagueName" class="text-xl font-black text-indigo-400">---</span>
+                    </div>
+                </div>
+
+                <hr class="my-6 border-slate-800">
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <span class="text-slate-400 text-xs block mb-1 font-medium"><i class="fa-solid fa-calendar-day text-blue-400 mr-1.5"></i> Fundado en</span>
+                        <span id="foundedYear" class="text-lg font-bold text-white">---</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <span class="text-slate-400 text-xs block mb-1 font-medium"><i class="fa-solid fa-user-group text-emerald-400 mr-1.5"></i> Fundador(es)</span>
+                        <span id="founders" class="text-sm font-semibold text-white truncate block" title="--">---</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <span class="text-slate-400 text-xs block mb-1 font-medium"><i class="fa-solid fa-ranking-star text-yellow-400 mr-1.5"></i> Ranking Global</span>
+                        <span id="globalRanking" class="text-lg font-bold text-amber-300">---</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <span class="text-slate-400 text-xs block mb-1 font-medium"><i class="fa-solid fa-shirt text-purple-400 mr-1.5"></i> Apodo / Nombre</span>
+                        <span id="nickname" class="text-sm font-semibold text-white truncate block">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Títulos y Palmarés -->
+            <div class="glass border border-slate-800 rounded-2xl p-6 glow-gold">
+                <h3 class="text-xl font-bold text-yellow-400 flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-trophy text-amber-400"></i> Palmarés y Títulos Principales
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border border-yellow-500/30 rounded-xl p-4 text-center">
+                        <i class="fa-solid fa-crown text-3xl text-yellow-400 mb-2"></i>
+                        <span class="text-xs text-yellow-200 block uppercase font-bold tracking-wider">Champions / Libertadores</span>
+                        <span id="continentalTitles" class="text-4xl font-black text-white mt-1 block">0</span>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/5 border border-blue-500/30 rounded-xl p-4 text-center">
+                        <i class="fa-solid fa-shield text-3xl text-blue-400 mb-2"></i>
+                        <span class="text-xs text-blue-200 block uppercase font-bold tracking-wider">Ligas Nacionales</span>
+                        <span id="nationalLeagueTitles" class="text-4xl font-black text-white mt-1 block">0</span>
+                    </div>
+                    <div class="bg-gradient-to-br from-indigo-500/10 to-purple-500/5 border border-indigo-500/30 rounded-xl p-4 text-center">
+                        <i class="fa-solid fa-award text-3xl text-indigo-400 mb-2"></i>
+                        <span class="text-xs text-indigo-200 block uppercase font-bold tracking-wider">Copas Nacionales</span>
+                        <span id="nationalCupTitles" class="text-4xl font-black text-white mt-1 block">0</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-slate-500"></i> Desglose Detallado de Trofeos Oficiales:
+                    </h4>
+                    <ul id="trophiesList" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-slate-300">
+                        <!-- Se llena dinámicamente -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Historia y Origen -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass border border-slate-800 rounded-2xl p-6">
+                    <h3 class="text-lg font-bold text-blue-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> Historia y Origen
+                    </h3>
+                    <p id="clubHistory" class="text-slate-300 text-sm leading-relaxed">---</p>
+                </div>
+
+                <div class="glass border border-slate-800 rounded-2xl p-6">
+                    <h3 class="text-lg font-bold text-purple-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-fire"></i> Rivales Históricos y Clásicos
+                    </h3>
+                    <ul id="rivalsList" class="space-y-2 text-sm text-slate-300 mb-5">
+                        <!-- Se llena dinámicamente -->
+                    </ul>
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1 font-semibold">Máximo Goleador Histórico:</span>
+                        <span id="topScorer" class="text-base font-bold text-emerald-400">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Curiosidades / Datos Extra -->
+            <div class="glass border border-slate-800 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb"></i> Datos Curiosos y Récords
+                </h3>
+                <ul id="factsList" class="space-y-2 text-sm text-slate-300">
+                    <!-- Se llena dinámicamente -->
+                </ul>
+            </div>
+
+            <!-- Fuentes / Grounding Metadata -->
+            <div id="sourcesContainer" class="hidden text-xs text-slate-500 pt-3 border-t border-slate-800">
+                <span class="font-semibold text-slate-400 block mb-2">Fuentes en tiempo real verificadas por la IA:</span>
+                <div id="sourcesList" class="flex flex-wrap gap-2"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500 bg-slate-900/50">
+        <p>FutbolAI Pro • Proyecto de Robótica e Inteligencia Artificial • Creado con Gemini 3 Flash</p>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        const apiKey = ""; // Gemini API key handled automatically
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const club = document.getElementById('clubInput').value.trim();
+            if (club) searchClub(club);
+        });
+
+        function searchClub(clubName) {
+            document.getElementById('clubInput').value = clubName;
+            fetchClubData(clubName);
+        }
+
+        async function fetchClubData(clubName) {
+            const loadingState = document.getElementById('loadingState');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const errorMessage = document.getElementById('errorMessage');
+            const searchBtn = document.getElementById('searchBtn');
+
+            // Toggle views
+            loadingState.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            searchBtn.disabled = true;
+
+            const prompt = `Proporciona información estructurada sobre el club de fútbol "${clubName}". 
+            Responde ÚNICAMENTE en formato JSON válido con el siguiente esquema estricto:
+
+            {
+              "name": "Nombre completo del club",
+              "country": "País de origen",
+              "badgeUrl": "URL directa de la imagen del escudo del club",
+              "founded": "Año o fecha de fundación exacta",
+              "founders": "Nombres de quiénes o cómo lo fundaron",
+              "league": "Liga actual en la que compite (ej: Premier League, LaLiga, Liga Profesional, etc.)",
+              "nickname": "Apodo o apodos del equipo",
+              "stadium": {
+                "name": "Nombre del estadio",
+                "capacity": "Capacidad de espectadores"
+              },
+              "ranking": "Puesto aproximado en ranking global o histórico",
+              "titles": {
+                "continental": "Número exacto de Champions League o Copas Libertadores ganadas",
+                "nationalLeague": "Número exacto de Ligas nacionales ganadas",
+                "nationalCup": "Número de Copas nacionales ganadas",
+                "breakdown": ["Lista de otros títulos importantes con cantidades"]
+              },
+              "topScorer": "Nombre del máximo goleador histórico y cantidad de goles",
+              "history": "Un resumen conciso pero completo de su historia, origen y evolución.",
+              "rivals": ["Lista de 2 a 4 sus máximos rivales tradicionales o clásicos"],
+              "curiosities": ["3 a 4 datos curiosos, récords o hechos destacados del club"]
+            }`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                tools: [{ "google_search": {} }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            };
+
+            let retries = 3;
+            let delay = 1000;
+
+            while (retries > 0) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        const jsonText = candidate.content.parts[0].text;
+                        const clubData = JSON.parse(jsonText);
+
+                        const sources = [];
+                        const groundingMetadata = candidate.groundingMetadata;
+                        if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                            groundingMetadata.groundingAttributions.forEach(attr => {
+                                if (attr.web?.uri && attr.web?.title) {
+                                    sources.push({ uri: attr.web.uri, title: attr.web.title });
+                                }
+                            });
+                        }
+
+                        renderClubData(clubData, sources);
+                        loadingState.classList.add('hidden');
+                        resultsContainer.classList.remove('hidden');
+                        searchBtn.disabled = false;
+                        return;
+                    } else {
+                        throw new Error("Respuesta inválida de la IA.");
+                    }
+
+                } catch (err) {
+                    console.warn(`Intento fallido. Reintentando...`, err);
+                    retries--;
+                    if (retries === 0) {
+                        loadingState.classList.add('hidden');
+                        showError("No pudimos obtener la información del club. Verifica el nombre e intenta nuevamente.");
+                        searchBtn.disabled = false;
+                        return;
+                    }
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        function renderClubData(data, sources) {
+            document.getElementById('clubName').innerText = data.name || "Club Desconocido";
+            document.getElementById('countryBadge').innerText = data.country || "Internacional";
+            document.getElementById('leagueName').innerText = data.league || "No disponible";
+            document.getElementById('stadiumName').innerText = data.stadium?.name || "Estadio Principal";
+            document.getElementById('stadiumCapacity').innerText = data.stadium?.capacity || "N/A";
+            document.getElementById('foundedYear').innerText = data.founded || "Desconocido";
+            document.getElementById('founders').innerText = data.founders || "Fundadores diversos";
+            document.getElementById('founders').title = data.founders || "";
+            document.getElementById('globalRanking').innerText = data.ranking || "Top";
+            document.getElementById('nickname').innerText = data.nickname || "N/A";
+
+            // Escudo
+            const badgeImg = document.getElementById('clubBadge');
+            const placeholderUrl = `https://placehold.co/120x120/1e293b/38bdf8?text=${encodeURIComponent(data.name ? data.name.substring(0,3).toUpperCase() : 'FC')}`;
+            if (data.badgeUrl && data.badgeUrl.startsWith('http')) {
+                badgeImg.src = data.badgeUrl;
+            } else {
+                badgeImg.src = placeholderUrl;
+            }
+
+            // Títulos
+            document.getElementById('continentalTitles').innerText = data.titles?.continental || "0";
+            document.getElementById('nationalLeagueTitles').innerText = data.titles?.nationalLeague || "0";
+            document.getElementById('nationalCupTitles').innerText = data.titles?.nationalCup || "0";
+
+            // Trofeos detallados
+            const trophiesList = document.getElementById('trophiesList');
+            trophiesList.innerHTML = "";
+            if (data.titles?.breakdown && Array.isArray(data.titles.breakdown)) {
+                data.titles.breakdown.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = "flex items-center gap-2 bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/60";
+                    li.innerHTML = `<i class="fa-solid fa-trophy text-amber-400 text-xs"></i> <span>${item}</span>`;
+                    trophiesList.appendChild(li);
+                });
+            }
+
+            // Historia
+            document.getElementById('clubHistory').innerText = data.history || "Información histórica no disponible.";
+
+            // Rivales
+            const rivalsList = document.getElementById('rivalsList');
+            rivalsList.innerHTML = "";
+            if (data.rivals && Array.isArray(data.rivals)) {
+                data.rivals.forEach(rival => {
+                    const li = document.createElement('li');
+                    li.className = "flex items-center gap-2 bg-slate-800/40 p-2 rounded-lg border border-slate-700/40";
+                    li.innerHTML = `<i class="fa-solid fa-shield-halved text-red-400"></i> <span>${rival}</span>`;
+                    rivalsList.appendChild(li);
+                });
+            }
+            document.getElementById('topScorer').innerText = data.topScorer || "No registrado";
+
+            // Curiosidades
+            const factsList = document.getElementById('factsList');
+            factsList.innerHTML = "";
+            if (data.curiosities && Array.isArray(data.curiosities)) {
+                data.curiosities.forEach(fact => {
+                    const li = document.createElement('li');
+                    li.className = "flex items-start gap-2.5 bg-slate-800/30 p-2.5 rounded-lg border border-slate-700/30";
+                    li.innerHTML = `<i class="fa-solid fa-star text-emerald-400 text-xs mt-1 shrink-0"></i> <span>${fact}</span>`;
+                    factsList.appendChild(li);
+                });
+            }
+
+            // Fuentes
+            const sourcesContainer = document.getElementById('sourcesContainer');
+            const sourcesList = document.getElementById('sourcesList');
+            sourcesList.innerHTML = "";
+            if (sources && sources.length > 0) {
+                sourcesContainer.classList.remove('hidden');
+                sources.slice(0, 4).forEach(src => {
+                    const a = document.createElement('a');
+                    a.href = src.uri;
+                    a.target = "_blank";
+                    a.className = "inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-blue-400 hover:text-blue-300 transition-all border border-slate-700";
+                    a.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span class="truncate max-w-[160px]">${src.title}</span>`;
+                    sourcesList.appendChild(a);
+                });
+            } else {
+                sourcesContainer.classList.add('hidden');
+            }
+        }
+
+        function showError(msg) {
+            const errorMessage = document.getElementById('errorMessage');
+            document.getElementById('errorText').innerText = msg;
+            errorMessage.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
